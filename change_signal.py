@@ -24,6 +24,7 @@ class ChangeSignal(TaskTemplate):
     launch_example = False
     trials = 400
     score = 0
+    waiting_time = 0.25
     exp_start_timestamp = time.time()
 
     next = f"Pour passer à l'instruction suivante, appuyez sur la touche {yes_key_name}"
@@ -57,7 +58,6 @@ class ChangeSignal(TaskTemplate):
         self.create_visual_text("+", color=self.text_color).draw()
         self.win.flip()
         core.wait(0.5)
-        waiting_time = 0.25
         if self.L[no_trial] == 0 or self.L[no_trial] == 1:
             self.create_visual_image(image=f"img/img_{self.L[no_trial]}.png", size=[get_monitors()[0].width, get_monitors()[0].height]).draw()
             self.win.flip()
@@ -70,7 +70,7 @@ class ChangeSignal(TaskTemplate):
             else:
                 self.create_visual_image(image=f"carre.jpeg", pos=(-450, 0)).draw()
             self.win.flip()
-            core.wait(waiting_time)
+            core.wait(self.waiting_time)
             self.create_visual_image(image=f"img/img_{self.L[no_trial]}.png",
                                      size=[get_monitors()[0].width, get_monitors()[0].height]).draw()
             self.win.flip()
@@ -83,11 +83,11 @@ class ChangeSignal(TaskTemplate):
             good_ans = self.yes_key_code
 
         if resp == good_ans:
-            if waiting_time >= 0.2:
-                waiting_time -= 0.05
+            if self.waiting_time >= 0.2:
+                self.waiting_time -= 0.05
             self.score += 1
         else:
-            waiting_time += 0.05
+            self.waiting_time += 0.05
 
         self.update_csv(
             self.participant,
